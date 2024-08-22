@@ -132,7 +132,7 @@ internal abstract class ConsoleHelper
         AnsiConsole.Console.Input.ReadKey(false);
     }
 
-    internal static DateTime GetDateTime(string message = "Enter a date and time")
+    internal static DateTime GetDateTime(string message = "Enter a date and time", DateTime? afterDateTime = null)
     {
         TextPrompt<string> dateTimePrompt = new TextPrompt<string>($"{message} [grey](yyyy-MM-dd HH:mm:ss)[/]:")
             .DefaultValue(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
@@ -143,8 +143,21 @@ internal abstract class ConsoleHelper
                                                       "yyyy-MM-dd HH:mm:ss",
                                                       CultureInfo.InvariantCulture,
                                                       DateTimeStyles.None,
-                                                      out _);
-                return isValid ? ValidationResult.Success() : ValidationResult.Error("[red]Invalid date and time format.[/]");
+                                                      out DateTime result);
+
+                bool isAfterDateTime = true;
+
+                if (isValid)
+                {
+                    if (afterDateTime != null)
+                    {
+                        isAfterDateTime = result.CompareTo(DateTime.Now) > 0;
+                    }
+                }
+
+                return isValid && isAfterDateTime
+                    ? ValidationResult.Success()
+                    : ValidationResult.Error("[red]Invalid date and time format.[/]");
             });
 
         // Prompt the user for input

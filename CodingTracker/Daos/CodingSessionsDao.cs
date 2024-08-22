@@ -14,7 +14,7 @@ internal abstract class CodingSessionsDao
         {
             DatabaseHelper.SqliteConnection!.Open();
 
-            command.CommandText = "SELECT id, description, start_date, end_date FROM CODING_SESSIONS WHERE id = @id AND username = @username;";
+            command.CommandText = "SELECT id, description, start_date, end_date, duration_in_seconds FROM CODING_SESSIONS WHERE id = @id AND username = @username;";
             command.Parameters.AddWithValue("id", id);
             command.Parameters.AddWithValue("username", username);
 
@@ -22,7 +22,7 @@ internal abstract class CodingSessionsDao
             {
                 while (reader.Read())
                 {
-                    codingSession = new CodingSessionShowDTO(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
+                    codingSession = new CodingSessionShowDTO(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetInt64(4));
                 }
             }
 
@@ -39,14 +39,14 @@ internal abstract class CodingSessionsDao
         using (SQLiteCommand command = DatabaseHelper.CreateCommand())
         {
             DatabaseHelper.SqliteConnection!.Open();
-            command.CommandText = "SELECT id, description, start_date, end_date FROM CODING_SESSIONS WHERE username = @username;";
+            command.CommandText = "SELECT id, description, start_date, end_date, duration_in_seconds FROM CODING_SESSIONS WHERE username = @username;";
             command.Parameters.AddWithValue("username", username);
 
             using (SQLiteDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    codingSessions.Add(new CodingSessionShowDTO(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                    codingSessions.Add(new CodingSessionShowDTO(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetInt64(4)));
                 }
             }
 
@@ -63,12 +63,13 @@ internal abstract class CodingSessionsDao
 
         using (SQLiteCommand command = DatabaseHelper.CreateCommand())
         {
-            command.CommandText = "INSERT INTO CODING_SESSIONS (description, username, start_date, end_date) VALUES (@description, @username, @startDate, @endDate)";
+            command.CommandText = "INSERT INTO CODING_SESSIONS (description, username, start_date, end_date, duration_in_seconds) VALUES (@description, @username, @startDate, @endDate, @durationInSeconds)";
 
             command.Parameters.AddWithValue("description", codingSessionStoreDTO.Description);
             command.Parameters.AddWithValue("username", codingSessionStoreDTO.Username);
             command.Parameters.AddWithValue("startDate", codingSessionStoreDTO.StartDateTime);
             command.Parameters.AddWithValue("endDate", codingSessionStoreDTO.EndDateTime);
+            command.Parameters.AddWithValue("durationInSeconds", codingSessionStoreDTO.DurationInSeconds);
 
             command.ExecuteNonQuery();
         }
@@ -86,13 +87,14 @@ internal abstract class CodingSessionsDao
 
             using (SQLiteCommand command = DatabaseHelper.CreateCommand())
             {
-                command.CommandText = "UPDATE CODING_SESSIONS SET description = @description, start_date = @startDate, end_date = @endDate WHERE id = @id and username = @username;";
+                command.CommandText = "UPDATE CODING_SESSIONS SET description = @description, start_date = @startDate, end_date = @endDate, duration_in_seconds = @durationInSeconds WHERE id = @id and username = @username;";
 
                 command.Parameters.AddWithValue("id", codingSessionUpdateDTO.Id);
                 command.Parameters.AddWithValue("description", codingSessionUpdateDTO.Description);
                 command.Parameters.AddWithValue("startDate", codingSessionUpdateDTO.StartDateTime);
                 command.Parameters.AddWithValue("endDate", codingSessionUpdateDTO.EndDateTime);
                 command.Parameters.AddWithValue("username", codingSessionUpdateDTO.Username);
+                command.Parameters.AddWithValue("durationInSeconds", codingSessionUpdateDTO.DurationInSeconds);
 
                 command.ExecuteNonQuery();
             }

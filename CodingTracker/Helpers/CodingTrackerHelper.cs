@@ -66,7 +66,8 @@ internal class CodingTrackerHelper
             CurrentUser!,
             description,
             startDate.ToString("yyyy-MM-dd HH:mm:ss"),
-            endDate.ToString("yyyy-MM-dd HH:mm:ss"))
+            endDate.ToString("yyyy-MM-dd HH:mm:ss"),
+            long.Parse((endDate - startDate).TotalSeconds.ToString()))
         );
 
         ConsoleHelper.ShowMessage("Coding session stored successfully!");
@@ -84,8 +85,7 @@ internal class CodingTrackerHelper
         {
             string? description = ConsoleHelper.GetText("What's the description?");
             DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date");
-            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date");
-
+            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date", startDate);
 
 
             bool result = CodingSessionsDao.UpdateCodingSession(new CodingSessionUpdateDTO(
@@ -93,7 +93,9 @@ internal class CodingTrackerHelper
                 CurrentUser!,
                 description,
                 startDate.ToString("yyyy-MM-dd HH:mm:ss"),
-                endDate.ToString("yyyy-MM-dd HH:mm:ss"))
+                endDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                long.Parse((endDate - startDate).TotalSeconds.ToString())
+                )
             );
 
             ConsoleHelper.ShowMessage(result ? "Coding session updated successfully!" : "Something went wrong :(");
@@ -128,7 +130,7 @@ internal class CodingTrackerHelper
 
     private void PrintCodingSession(CodingSessionShowDTO codingSession)
     {
-        ConsoleHelper.ShowMessage($"{codingSession.Id} - {codingSession.StartDate} to {codingSession.EndDate} - {codingSession.Description}");
+        ConsoleHelper.ShowMessage($"{codingSession.Id} - {codingSession.StartDate} to {codingSession.EndDate} - {codingSession.DurationInSeconds} seconds - {codingSession.Description}");
     }
 
     private void ListCodingSessions()
