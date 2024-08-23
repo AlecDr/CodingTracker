@@ -63,12 +63,20 @@ internal abstract class ConsoleHelper
 
     }
 
-    internal static string? GetText(string message, bool canCancel = false)
+    internal static string? GetText(
+        string message,
+        string? defaultValue = null,
+        bool canCancel = false,
+        bool shouldValidate = false,
+        int minLength = 1,
+        int maxLength = 255
+    )
     {
         //return AnsiConsole.Ask<string>(message);
 
         ConsoleKey key;
-        string input = string.Empty;
+        string input = defaultValue ?? string.Empty;
+        bool continueReading = true;
 
         if (canCancel)
         {
@@ -76,8 +84,19 @@ internal abstract class ConsoleHelper
             AnsiConsole.MarkupLine("[grey](Press Esc to cancel)[/]");
         }
 
+        if (shouldValidate)
+        {
+            AnsiConsole.MarkupLine($"\n[red](Input must have at least {minLength} characters and a maximum of {maxLength} characters)[/]");
+        }
+
         // Begin the prompt
         AnsiConsole.Markup($"[bold]{message}[/] ");
+
+        if (input.Length > 0)
+        {
+            Console.Write(input);
+        }
+
 
         // Read user input, one key at a time
         do
@@ -105,7 +124,29 @@ internal abstract class ConsoleHelper
                 Console.Write(keyInfo.KeyChar);  // Show the character
             }
 
-        } while (key != ConsoleKey.Enter);
+            if (key == ConsoleKey.Enter)
+            {
+                bool valid = true;
+
+                if (shouldValidate)
+                {
+                    valid = false;
+
+                    string? validationMessage = ValidationHelper.ValidateRequiredText(input, 4);
+
+                    if (validationMessage == null)
+                    {
+                        valid = true;
+                    }
+                }
+
+                if (valid)
+                {
+                    continueReading = false;
+                }
+            }
+
+        } while (continueReading);
 
         AnsiConsole.WriteLine(); // Move to the next line after Enter is pressed
         return input;

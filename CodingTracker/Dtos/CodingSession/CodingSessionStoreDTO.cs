@@ -1,4 +1,6 @@
-﻿namespace HabitLogger.Dtos.HabitOccurrence;
+﻿using CodingTracker.Dtos.CodingSession;
+
+namespace HabitLogger.Dtos.HabitOccurrence;
 
 internal class CodingSessionStoreDTO
 {
@@ -16,4 +18,16 @@ internal class CodingSessionStoreDTO
         EndDateTime = endDateTime;
         DurationInSeconds = durationInSeconds;
     }
+
+    internal static CodingSessionStoreDTO FromPromptDTO(string username, CodingSessionPromptDTO codingSessionPromptDTO)
+    {
+        return new CodingSessionStoreDTO(
+            username,
+            codingSessionPromptDTO.Description,
+            codingSessionPromptDTO.StartDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+            codingSessionPromptDTO.EndDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+            codingSessionPromptDTO.DurationInSeconds
+        );
+    }
+
 }

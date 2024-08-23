@@ -1,5 +1,6 @@
 ﻿
 using CodingTracker.Daos;
+using CodingTracker.Dtos.CodingSession;
 using HabitLogger.Dtos.HabitOccurrence;
 
 namespace CodingTracker.Helpers;
@@ -58,21 +59,25 @@ internal class CodingTrackerHelper
     {
         ConsoleHelper.ShowTitle("Create an Coding Session");
 
-        string? description = ConsoleHelper.GetText("What's the description?");
-        DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date");
-        DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date");
+        CodingSessionPromptDTO? codingSessionPromptDTO = PromptUserForCodingSessionData();
 
-        CodingSessionsDao.StoreCodingSession(new CodingSessionStoreDTO(
-            CurrentUser!,
-            description,
-            startDate.ToString("yyyy-MM-dd HH:mm:ss"),
-            endDate.ToString("yyyy-MM-dd HH:mm:ss"),
-            long.Parse((endDate - startDate).TotalSeconds.ToString()))
-        );
+        if (codingSessionPromptDTO != null)
+        {
+            CodingSessionsDao.StoreCodingSession(
+                CodingSessionStoreDTO.FromPromptDTO(
+                    CurrentUser!,
+                    codingSessionPromptDTO
+                )
+            );
 
-        ConsoleHelper.ShowMessage("Coding session stored successfully!");
-
-        ConsoleHelper.PressAnyKeyToContinue();
+            ConsoleHelper.ShowMessage("Coding session stored successfully!");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
+        else
+        {
+            ConsoleHelper.ShowMessage("No data was provided, operation canceled by user!");
+            ConsoleHelper.PressAnyKeyToContinue();
+        }
     }
 
     private void UpdateCodingSession()
@@ -83,23 +88,26 @@ internal class CodingTrackerHelper
 
         if (id.HasValue)
         {
-            string? description = ConsoleHelper.GetText("What's the description?");
-            DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date");
-            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date", startDate);
+            CodingSessionPromptDTO? codingSessionPromptDTO = PromptUserForCodingSessionData();
 
+            if (codingSessionPromptDTO != null)
+            {
+                bool result = CodingSessionsDao.UpdateCodingSession(
+                   CodingSessionUpdateDTO.FromPromptDTO(
+                       id.Value,
+                       CurrentUser!,
+                       codingSessionPromptDTO
+                   )
+               );
 
-            bool result = CodingSessionsDao.UpdateCodingSession(new CodingSessionUpdateDTO(
-                id.Value,
-                CurrentUser!,
-                description,
-                startDate.ToString("yyyy-MM-dd HH:mm:ss"),
-                endDate.ToString("yyyy-MM-dd HH:mm:ss"),
-                long.Parse((endDate - startDate).TotalSeconds.ToString())
-                )
-            );
-
-            ConsoleHelper.ShowMessage(result ? "Coding session updated successfully!" : "Something went wrong :(");
-            ConsoleHelper.PressAnyKeyToContinue();
+                ConsoleHelper.ShowMessage(result ? "Coding session updated successfully!" : "Something went wrong :(");
+                ConsoleHelper.PressAnyKeyToContinue();
+            }
+            else
+            {
+                ConsoleHelper.ShowMessage("No data was provided, operation canceled by user!");
+                ConsoleHelper.PressAnyKeyToContinue();
+            }
         }
         else
         {
@@ -219,5 +227,20 @@ internal class CodingTrackerHelper
             "4 - [blue]D[/]elete Coding session",
             "5 - [blue]A[/]lter username",
             ];
+    }
+
+    internal static CodingSessionPromptDTO? PromptUserForCodingSessionData()
+    {
+        string? description = ConsoleHelper.GetText("What's the description?", null, true, true);
+
+        if (description != null)
+        {
+            DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date");
+            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date");
+            return new CodingSessionPromptDTO(description, startDate, endDate);
+        }
+
+
+        return null;
     }
 }
