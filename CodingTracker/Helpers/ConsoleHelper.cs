@@ -187,18 +187,24 @@ internal abstract class ConsoleHelper
                                                       out DateTime result);
 
                 bool isAfterDateTime = true;
+                string afterDateTimeValidationMessage = string.Empty;
 
                 if (isValid)
                 {
                     if (afterDateTime != null)
                     {
                         isAfterDateTime = result.CompareTo(DateTime.Now) > 0;
+
+                        if (!isAfterDateTime)
+                        {
+                            afterDateTimeValidationMessage = $"Date must be after {afterDateTime.Value.ToString("yyyy-MM-dd HH:mm:ss")}";
+                        }
                     }
                 }
 
                 return isValid && isAfterDateTime
                     ? ValidationResult.Success()
-                    : ValidationResult.Error("[red]Invalid date and time format.[/]");
+                    : ValidationResult.Error($"[red]Invalid date and time format. {afterDateTimeValidationMessage}[/]");
             });
 
         // Prompt the user for input

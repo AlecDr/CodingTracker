@@ -231,12 +231,12 @@ internal class CodingTrackerHelper
 
     internal static CodingSessionPromptDTO? PromptUserForCodingSessionData()
     {
-        string? description = ConsoleHelper.GetText("What's the description?", null, true, true);
+        string? description = ConsoleHelper.GetText("What did you learn today?", null, true, true);
 
         if (description != null)
         {
             DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date");
-            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date");
+            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date", startDate);
             return new CodingSessionPromptDTO(description, startDate, endDate);
         }
 
