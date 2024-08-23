@@ -173,10 +173,12 @@ internal abstract class ConsoleHelper
         AnsiConsole.Console.Input.ReadKey(false);
     }
 
-    internal static DateTime GetDateTime(string message = "Enter a date and time", DateTime? afterDateTime = null)
+    internal static DateTime GetDateTime(string message = "Enter a date and time", DateTime? afterDateTime = null, DateTime? defaultValue = null)
     {
         TextPrompt<string> dateTimePrompt = new TextPrompt<string>($"{message} [grey](yyyy-MM-dd HH:mm:ss)[/]:")
-            .DefaultValue(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
+            .DefaultValue(defaultValue != null
+                ? defaultValue.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
             .Validate(input =>
             {
                 // Attempt to parse the input as a date and time in the specified format

@@ -84,17 +84,17 @@ internal class CodingTrackerHelper
     {
         ConsoleHelper.ShowTitle("Update an codingSession");
 
-        int? id = ShowCodingSessionsAndAskForId("Whats the Coding session ID to update?");
+        CodingSessionShowDTO? selectedCodingSessionShowDTO = ShowCodingSessionsAndAskForId("Whats the Coding session ID to update?");
 
-        if (id.HasValue)
+        if (selectedCodingSessionShowDTO != null)
         {
-            CodingSessionPromptDTO? codingSessionPromptDTO = PromptUserForCodingSessionData();
+            CodingSessionPromptDTO? codingSessionPromptDTO = PromptUserForCodingSessionData(selectedCodingSessionShowDTO);
 
             if (codingSessionPromptDTO != null)
             {
                 bool result = CodingSessionsDao.UpdateCodingSession(
                    CodingSessionUpdateDTO.FromPromptDTO(
-                       id.Value,
+                       selectedCodingSessionShowDTO.Id,
                        CurrentUser!,
                        codingSessionPromptDTO
                    )
@@ -120,11 +120,11 @@ internal class CodingTrackerHelper
     {
         ConsoleHelper.ShowTitle("Delete a Coding session");
 
-        int? id = ShowCodingSessionsAndAskForId("Whats the Coding session ID to delete?");
+        CodingSessionShowDTO? selectedCodingSessionShowDTO = ShowCodingSessionsAndAskForId("Whats the Coding session ID to delete?");
 
-        if (id.HasValue)
+        if (selectedCodingSessionShowDTO != null)
         {
-            bool result = CodingSessionsDao.DeleteCodingSession(id.Value, CurrentUser!);
+            bool result = CodingSessionsDao.DeleteCodingSession(selectedCodingSessionShowDTO.Id, CurrentUser!);
 
             ConsoleHelper.ShowMessage(result ? "Coding session deleted successfully!" : "Something went wrong :(");
             ConsoleHelper.PressAnyKeyToContinue();
@@ -164,7 +164,7 @@ internal class CodingTrackerHelper
 
     }
 
-    private int? ShowCodingSessionsAndAskForId(string message)
+    private CodingSessionShowDTO? ShowCodingSessionsAndAskForId(string message)
     {
         List<CodingSessionShowDTO> codingSessions = CodingSessionsDao.GetAllCodingSessions(CurrentUser!);
 
@@ -183,7 +183,7 @@ internal class CodingTrackerHelper
 
             int.TryParse(ConsoleHelper.GetText(message), out int id);
 
-            return codingSessions.Where(codingSession => codingSession.Id == (id > 0 ? id : 0)).Count() > 0 ? id : null;
+            return codingSessions.FirstOrDefault(codingSession => codingSession.Id == (id > 0 ? id : 0));
         }
     }
 
@@ -229,14 +229,26 @@ internal class CodingTrackerHelper
             ];
     }
 
-    internal static CodingSessionPromptDTO? PromptUserForCodingSessionData()
+    internal static CodingSessionPromptDTO? PromptUserForCodingSessionData(CodingSessionShowDTO? defaultCodingSessionShowDTO = null)
     {
-        string? description = ConsoleHelper.GetText("What did you learn today?", null, true, true);
+        string? description = ConsoleHelper.GetText(
+            "What did you learn today?",
+            defaultCodingSessionShowDTO != null ? defaultCodingSessionShowDTO.Description : null,
+            true,
+            true
+        );
 
         if (description != null)
         {
-            DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date");
-            DateTime endDate = ConsoleHelper.GetDateTime("Enter the end date", startDate);
+            DateTime startDate = ConsoleHelper.GetDateTime("Enter the start date",
+                null,
+                defaultCodingSessionShowDTO != null ? DateTime.Parse(defaultCodingSessionShowDTO.StartDate) : null
+            );
+            DateTime endDate = ConsoleHelper.GetDateTime(
+                "Enter the end date",
+                startDate,
+                defaultCodingSessionShowDTO != null ? DateTime.Parse(defaultCodingSessionShowDTO.EndDate) : null
+            );
             return new CodingSessionPromptDTO(description, startDate, endDate);
         }
 
