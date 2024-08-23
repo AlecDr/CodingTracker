@@ -145,7 +145,7 @@ internal class CodingTrackerHelper
     {
         ConsoleHelper.ShowTitle("List of codingSessions");
 
-        List<CodingSessionShowDTO> codingSessions = CodingSessionsDao.GetAllCodingSessions(CurrentUser!);
+        List<CodingSessionShowDTO> codingSessions = CodingSessionsDao.GetAllCodingSessionsDapper(CurrentUser!);
 
         if (codingSessions.Count() > 0)
         {

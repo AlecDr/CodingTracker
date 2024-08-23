@@ -1,4 +1,5 @@
 ﻿using CodingTracker.Helpers;
+using Dapper;
 using HabitLogger.Dtos.HabitOccurrence;
 using System.Data.SQLite;
 
@@ -32,6 +33,18 @@ internal abstract class CodingSessionsDao
         return codingSession;
     }
 
+    internal static CodingSessionShowDTO? FindCodingSessionDapper(int id, string username)
+    {
+        using (SQLiteConnection? connection = DatabaseHelper.SqliteConnection)
+        {
+            connection!.Open();
+
+            string query = "SELECT id, description, start_date, end_date, duration_in_seconds FROM CODING_SESSIONS WHERE id = @id AND username = @username";
+
+            return connection.QueryFirstOrDefault<CodingSessionShowDTO>(query, new { id, username });
+        }
+    }
+
     internal static List<CodingSessionShowDTO> GetAllCodingSessions(string username)
     {
         List<CodingSessionShowDTO> codingSessions = [];
@@ -53,6 +66,18 @@ internal abstract class CodingSessionsDao
 
             DatabaseHelper.SqliteConnection!.Close();
         }
+
+        return codingSessions;
+    }
+
+    internal static List<CodingSessionShowDTO> GetAllCodingSessionsDapper(string username)
+    {
+        DatabaseHelper.SqliteConnection!.Open();
+
+        string query = "SELECT id as Id, description as Description, start_date as StartDate, end_date as EndDate, duration_in_seconds as DurationInSeconds FROM CODING_SESSIONS WHERE username = @username";
+
+        List<CodingSessionShowDTO> codingSessions = DatabaseHelper.SqliteConnection.Query<CodingSessionShowDTO>(query, new { username }).ToList();
+        DatabaseHelper.SqliteConnection!.Close();
 
         return codingSessions;
     }

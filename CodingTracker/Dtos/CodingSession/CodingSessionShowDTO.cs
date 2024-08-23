@@ -8,6 +8,8 @@ internal class CodingSessionShowDTO
     internal string EndDate { get; }
     internal long DurationInSeconds { get; }
 
+    internal CodingSessionShowDTO() { }
+
     internal CodingSessionShowDTO(int id, string? description, string startDate, string endDate, long durationInSeconds)
     {
         Id = id;
