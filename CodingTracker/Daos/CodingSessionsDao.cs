@@ -105,8 +105,28 @@ internal abstract class CodingSessionsDao
 
         string query = "INSERT INTO CODING_SESSIONS (description, username, start_date, end_date, duration_in_seconds) VALUES (@Description, @Username, @StartDateTime, @EndDateTime, @DurationInSeconds);";
 
-        DatabaseHelper.SqliteConnection!.Execute(query, codingSessionStoreDTO.ToAnonnymousObject());
+        DatabaseHelper.SqliteConnection!.Execute(query, codingSessionStoreDTO.ToAnonymousObject());
         DatabaseHelper.SqliteConnection!.Close();
+    }
+
+    internal static bool UpdateCodingSessionDapper(CodingSessionUpdateDTO codingSessionUpdateDTO)
+    {
+        CodingSessionShowDTO? codingSession = FindCodingSession(codingSessionUpdateDTO.Id, codingSessionUpdateDTO.Username);
+
+        if (codingSession != null)
+        {
+            DatabaseHelper.SqliteConnection!.Open();
+
+            string query = "UPDATE CODING_SESSIONS SET description = @Description, start_date = @StartDateTime, end_date = @EndDateTime, duration_in_seconds = @DurationInSeconds WHERE id = @Id and username = @Username;";
+
+            DatabaseHelper.SqliteConnection!.Execute(query, codingSessionUpdateDTO.ToAnonymousObject());
+
+            DatabaseHelper.SqliteConnection!.Close();
+
+            return true;
+        }
+
+        return false;
     }
 
     internal static bool UpdateCodingSession(CodingSessionUpdateDTO codingSessionUpdateDTO)

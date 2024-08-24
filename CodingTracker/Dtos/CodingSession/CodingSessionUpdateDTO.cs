@@ -18,7 +18,6 @@ internal class CodingSessionUpdateDTO : CodingSessionStoreDTO
         Id = id;
     }
 
-
     internal static CodingSessionUpdateDTO FromPromptDTO(int id, string username, CodingSessionPromptDTO codingSessionPromptDTO)
     {
         return new CodingSessionUpdateDTO(
@@ -29,5 +28,18 @@ internal class CodingSessionUpdateDTO : CodingSessionStoreDTO
             codingSessionPromptDTO.EndDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
             codingSessionPromptDTO.DurationInSeconds
         );
+    }
+
+    internal override object ToAnonymousObject()
+    {
+        return new
+        {
+            Id,
+            Username = Username,
+            Description,
+            StartDateTime,
+            EndDateTime,
+            DurationInSeconds
+        };
     }
 }

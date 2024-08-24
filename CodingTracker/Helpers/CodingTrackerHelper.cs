@@ -92,7 +92,7 @@ internal class CodingTrackerHelper
 
             if (codingSessionPromptDTO != null)
             {
-                bool result = CodingSessionsDao.UpdateCodingSession(
+                bool result = CodingSessionsDao.UpdateCodingSessionDapper(
                    CodingSessionUpdateDTO.FromPromptDTO(
                        selectedCodingSessionShowDTO.Id,
                        CurrentUser!,

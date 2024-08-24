@@ -30,15 +30,15 @@ internal class CodingSessionStoreDTO
         );
     }
 
-    internal object ToAnonnymousObject()
+    internal virtual object ToAnonymousObject()
     {
         return new
         {
-            Username = Username,
-            Description = Description,
-            StartDateTime = StartDateTime,
-            EndDateTime = EndDateTime,
-            DurationInSeconds = DurationInSeconds
+            Username,
+            Description,
+            StartDateTime,
+            EndDateTime,
+            DurationInSeconds
         };
     }
 }
