@@ -164,4 +164,27 @@ internal abstract class CodingSessionsDao
 
         return false;
     }
+
+    internal static bool DeleteCodingSessionDapper(int id, string username)
+    {
+        CodingSessionShowDTO? codingSession = FindCodingSession(id, username);
+
+        if (codingSession != null)
+        {
+            DatabaseHelper.SqliteConnection!.Open();
+
+            string query = "DELETE FROM CODING_SESSIONS WHERE id = @Id and username = @Username;";
+            DatabaseHelper.SqliteConnection.Execute(query, new
+            {
+                Id = id,
+                Username = username
+            });
+
+            DatabaseHelper.SqliteConnection!.Close();
+
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -124,7 +124,7 @@ internal class CodingTrackerHelper
 
         if (selectedCodingSessionShowDTO != null)
         {
-            bool result = CodingSessionsDao.DeleteCodingSession(selectedCodingSessionShowDTO.Id, CurrentUser!);
+            bool result = CodingSessionsDao.DeleteCodingSessionDapper(selectedCodingSessionShowDTO.Id, CurrentUser!);
 
             ConsoleHelper.ShowMessage(result ? "Coding session deleted successfully!" : "Something went wrong :(");
             ConsoleHelper.PressAnyKeyToContinue();
