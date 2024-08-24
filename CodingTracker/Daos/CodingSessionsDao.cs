@@ -35,14 +35,11 @@ internal abstract class CodingSessionsDao
 
     internal static CodingSessionShowDTO? FindCodingSessionDapper(int id, string username)
     {
-        using (SQLiteConnection? connection = DatabaseHelper.SqliteConnection)
-        {
-            connection!.Open();
+        DatabaseHelper.SqliteConnection!.Open();
 
-            string query = "SELECT id, description, start_date, end_date, duration_in_seconds FROM CODING_SESSIONS WHERE id = @id AND username = @username";
+        string query = "SELECT id, description, start_date, end_date, duration_in_seconds FROM CODING_SESSIONS WHERE id = @id AND username = @username";
 
-            return connection.QueryFirstOrDefault<CodingSessionShowDTO>(query, new { id, username });
-        }
+        return DatabaseHelper.SqliteConnection.QueryFirstOrDefault<CodingSessionShowDTO>(query, new { id, username });
     }
 
     internal static List<CodingSessionShowDTO> GetAllCodingSessions(string username)
@@ -99,6 +96,16 @@ internal abstract class CodingSessionsDao
             command.ExecuteNonQuery();
         }
 
+        DatabaseHelper.SqliteConnection!.Close();
+    }
+
+    internal static void StoreCodingSessionDapper(CodingSessionStoreDTO codingSessionStoreDTO)
+    {
+        DatabaseHelper.SqliteConnection!.Open();
+
+        string query = "INSERT INTO CODING_SESSIONS (description, username, start_date, end_date, duration_in_seconds) VALUES (@Description, @Username, @StartDateTime, @EndDateTime, @DurationInSeconds);";
+
+        DatabaseHelper.SqliteConnection!.Execute(query, codingSessionStoreDTO.ToAnonnymousObject());
         DatabaseHelper.SqliteConnection!.Close();
     }
 

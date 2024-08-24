@@ -30,4 +30,15 @@ internal class CodingSessionStoreDTO
         );
     }
 
+    internal object ToAnonnymousObject()
+    {
+        return new
+        {
+            Username = Username,
+            Description = Description,
+            StartDateTime = StartDateTime,
+            EndDateTime = EndDateTime,
+            DurationInSeconds = DurationInSeconds
+        };
+    }
 }

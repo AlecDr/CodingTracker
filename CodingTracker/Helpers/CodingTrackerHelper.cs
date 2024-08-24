@@ -63,7 +63,7 @@ internal class CodingTrackerHelper
 
         if (codingSessionPromptDTO != null)
         {
-            CodingSessionsDao.StoreCodingSession(
+            CodingSessionsDao.StoreCodingSessionDapper(
                 CodingSessionStoreDTO.FromPromptDTO(
                     CurrentUser!,
                     codingSessionPromptDTO
