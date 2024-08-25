@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Configuration;
+using System.Data.SQLite;
 using System.Diagnostics;
 
 namespace CodingTracker.Helpers;
@@ -29,7 +30,8 @@ internal abstract class DatabaseHelper
     private static string GetDatabasePath()
     {
         string projectFolder = Environment.CurrentDirectory;
-        string databasePath = System.IO.Path.Combine(projectFolder, "coding-tracker.db");
+        string databaseName = ConfigurationManager.AppSettings.Get("DatabaseName");
+        string databasePath = System.IO.Path.Combine(projectFolder, databaseName);
 
         Debug.Print(databasePath);
         return databasePath;
