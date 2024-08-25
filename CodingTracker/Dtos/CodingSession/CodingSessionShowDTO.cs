@@ -1,4 +1,4 @@
-﻿namespace HabitLogger.Dtos.HabitOccurrence;
+﻿namespace CodingTracker.Dtos.HabitOccurrence;
 
 internal class CodingSessionShowDTO
 {

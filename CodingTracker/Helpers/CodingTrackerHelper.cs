@@ -1,7 +1,7 @@
 ﻿
 using CodingTracker.Daos;
 using CodingTracker.Dtos.CodingSession;
-using HabitLogger.Dtos.HabitOccurrence;
+using CodingTracker.Dtos.HabitOccurrence;
 
 namespace CodingTracker.Helpers;
 

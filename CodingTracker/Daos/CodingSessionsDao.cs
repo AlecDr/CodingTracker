@@ -1,6 +1,6 @@
-﻿using CodingTracker.Helpers;
+﻿using CodingTracker.Dtos.HabitOccurrence;
+using CodingTracker.Helpers;
 using Dapper;
-using HabitLogger.Dtos.HabitOccurrence;
 using System.Data.SQLite;
 
 namespace CodingTracker.Daos;

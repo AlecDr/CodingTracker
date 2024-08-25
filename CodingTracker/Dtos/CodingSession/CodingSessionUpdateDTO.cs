@@ -1,6 +1,6 @@
 ﻿using CodingTracker.Dtos.CodingSession;
 
-namespace HabitLogger.Dtos.HabitOccurrence;
+namespace CodingTracker.Dtos.HabitOccurrence;
 
 internal class CodingSessionUpdateDTO : CodingSessionStoreDTO
 {
